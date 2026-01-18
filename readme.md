@@ -100,13 +100,13 @@ func main() {
 	err = hostsfile.Encode(tmpf, h)
 	checkError(err)
 
-	err = os.Chmod(tmp.Name(), 0644)
+	err = os.Chmod(tmpf.Name(), 0644)
 	checkError(err)
 
-	err = os.Rename(tmp.Name(), "/etc/hosts")
+	err = os.Rename(tmpf.Name(), "/etc/hosts")
 	checkError(err)
 	fmt.Println("done")
 }
 ```
 
-[godoc]: https://godoc.org/github.com/kevinburke/hostsfile
+[godoc]: https://pkg.go.dev/github.com/kevinburke/hostsfile

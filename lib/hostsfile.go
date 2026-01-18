@@ -1,3 +1,26 @@
+// Package hostsfile provides functions to parse and manipulate /etc/hosts files.
+//
+// The package supports reading a hosts file, adding or removing hostname-to-IP
+// mappings, and writing the modified file back. Comments and blank lines are
+// preserved during editing.
+//
+// Basic usage:
+//
+//	f, err := os.Open("/etc/hosts")
+//	if err != nil {
+//		return err
+//	}
+//	h, err := hostsfile.Decode(f)
+//	if err != nil {
+//		return err
+//	}
+//	f.Close()
+//
+//	ip, _ := net.ResolveIPAddr("ip", "127.0.0.1")
+//	h.Set(*ip, "myapp.local")
+//
+//	out, _ := os.Create("/etc/hosts")
+//	hostsfile.Encode(out, h)
 package hostsfile
 
 import (
@@ -10,26 +33,30 @@ import (
 	"sync"
 )
 
-// Represents a hosts file. Records match a single line in the file.
+// Hostsfile represents a parsed hosts file. Each Record corresponds to a single
+// line in the file.
 type Hostsfile struct {
 	records []*Record
 }
 
-// Records returns an array of all entries in the hostsfile.
+// Records returns all entries in the hostsfile.
 func (h *Hostsfile) Records() []*Record {
 	return h.records
 }
 
-// A single line in the hosts file
+// Record represents a single line in the hosts file. A line may contain an IP
+// address with associated hostnames, a comment, or be blank.
 type Record struct {
+	// IpAddress is the IP address for this record. Zero value for comment/blank lines.
 	IpAddress net.IPAddr
+	// Hostnames maps hostnames to true for all hostnames associated with this IP.
 	Hostnames map[string]bool
 	comment   string
 	isBlank   bool
 	mu        sync.Mutex
 }
 
-// returns true if a and b are not both ipv4 addresses
+// matchProtocols returns true if a and b are both IPv4 or both IPv6 addresses.
 func matchProtocols(a, b net.IP) bool {
 	ato4 := a.To4()
 	bto4 := b.To4()
