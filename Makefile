@@ -2,10 +2,11 @@
 
 SHELL = /bin/bash -o pipefail
 
-BUMP_VERSION := $(GOPATH)/bin/bump_version
-STATICCHECK := $(GOPATH)/bin/staticcheck
-RELEASE := $(GOPATH)/bin/github-release
-WRITE_MAILMAP := $(GOPATH)/bin/write_mailmap
+GOBIN := $(shell go env GOPATH)/bin
+BUMP_VERSION := $(GOBIN)/bump_version
+STATICCHECK := $(GOBIN)/staticcheck
+RELEASE := $(GOBIN)/github-release
+WRITE_MAILMAP := $(GOBIN)/write_mailmap
 
 UNAME := $(shell uname)
 
@@ -13,16 +14,16 @@ test:
 	go test ./...
 
 $(STATICCHECK):
-	go get honnef.co/go/tools/cmd/staticcheck
+	go install honnef.co/go/tools/cmd/staticcheck@latest
 
 $(BUMP_VERSION):
-	go get -u github.com/kevinburke/bump_version
+	go install github.com/kevinburke/bump_version@latest
 
 $(RELEASE):
-	go get -u github.com/aktau/github-release
+	go install github.com/aktau/github-release@latest
 
 $(WRITE_MAILMAP):
-	go get -u github.com/kevinburke/write_mailmap
+	go install github.com/kevinburke/write_mailmap@latest
 
 force: ;
 
